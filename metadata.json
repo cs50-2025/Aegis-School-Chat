@@ -1,0 +1,12 @@
+{
+  "name": "Aegis - School-Safe PWA Chat & Collab",
+  "description": "School-safe real-time communication PWA featuring profanity blur filters, AI image moderation, WebRTC screen share with host safety killswitch, audio rooms, and AI unread chat summarizer.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera",
+    "display-capture"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

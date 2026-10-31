@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Suppress benign dev-proxy HMR websocket logs in iframe environment per environment guidelines -->
+    <script>
+      (function() {
+        function isViteWs(val) {
+          if (!val) return false;
+          const text = typeof val === 'string' ? val : (val.message || val.stack || String(val) || '');
+          return text.includes('WebSocket') || text.includes('[vite]');
+        }
+
+        const origError = console.error;
+        console.error = function(...args) {
+          const combined = args.map(a => (a && (a.message || a.stack || String(a))) || '').join(' ');
+          if (combined.includes('WebSocket') && (combined.includes('[vite]') || combined.includes('closed without opened'))) {
+            return;
+          }
+          origError.apply(console, args);
+        };
+
+        window.addEventListener('error', function(event) {
+          const msg = (event && (event.message || (event.error && event.error.message) || '')) + '';
+          if (msg.includes('WebSocket') || (msg.includes('[vite]') && msg.includes('closed'))) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            return true;
+          }
+        }, true);
+
+        window.addEventListener('unhandledrejection', function(event) {
+          const reason = event && event.reason;
+          const msg = (reason && (reason.message || String(reason)) || '') + '';
+          if (msg.includes('WebSocket') || (msg.includes('[vite]') && msg.includes('closed'))) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+        }, true);
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Aegis - School-Safe PWA Chat & Collab</title>
+    <meta name="description" content="School-safe real-time communication PWA featuring profanity blur filters, AI image moderation, WebRTC screen share with host safety killswitch, audio rooms, and AI unread chat summarizer." />
+    <meta property="og:title" content="Aegis - School-Safe PWA Chat & Collab" />
+    <meta property="og:description" content="School-safe real-time communication PWA featuring profanity blur filters, AI image moderation, WebRTC screen share with host safety killswitch, audio rooms, and AI unread chat summarizer." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- PWA meta tags -->
+    <meta name="theme-color" content="#0B0F19" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Aegis" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+
+    <!-- Google Fonts for crisp modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  </head>
+  <body class="bg-[#0B0F19] text-slate-100 antialiased selection:bg-indigo-500 selection:text-white">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
